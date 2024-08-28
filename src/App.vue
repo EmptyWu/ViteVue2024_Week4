@@ -16,13 +16,12 @@ import { RouterLink, RouterView } from 'vue-router'
       </nav>
     </div>
   </header> -->
-  <div class="conatiner bg-yellow">
+  <div class="conatiner">
     <RouterView />
   </div>
 </template>
 
 <style scoped>
-  .bg-yellow {
-    background-color: #FFD370;
-  }
+
+
 </style>
