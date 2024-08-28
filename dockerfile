@@ -22,6 +22,9 @@ RUN npm i --save-dev sass
 
 COPY . .
 
+# 設置環境變量，啟用輪詢模式
+ENV CHOKIDAR_USEPOLLING=true
+
 EXPOSE 5170-5179
 
 #CMD [ "bash" ]

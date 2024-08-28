@@ -13,6 +13,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - /erc/timezone:/erc/timezone:ro
     environment:
+      - CHOKIDAR_USEPOLLING=true
       - NODE_ENV=development
       - TZ=Asia/Taipei
 volumes:
