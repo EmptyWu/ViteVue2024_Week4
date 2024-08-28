@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {ref} from 'vue';
+import {useRouter} from 'vue-router';
 const isLogin=ref(false);
 
 const reg=(status)=>{
@@ -20,8 +21,33 @@ const reg=(status)=>{
             
                 <div class="col-12 col-md-6 d-flex flex-column align-items-center justify-content-center">
                     <div class="mt-5 w-100 lg:w-75">
-                        <h2>註冊帳號</h2>
+                        <h2 v-if="isLogin">註冊帳號</h2>
                         <h2>最實用的線上代辦事項服務</h2>
+                        <div v-if="isLogin">
+                            <div class="mt-3 text-start">
+                                <label for="email" class="fw-bolder">Email</label>
+                                <input type="email" class="form-control mb-3" id="email" placeholder="請輸入Email">
+                            
+                                <label for="nickname" class="fw-bolder">您的暱稱</label>
+                                <input type="text" class="form-control mb-3" id="nickname" placeholder="請輸入您的暱稱">
+
+                                <label for="password" class="fw-bolder">密碼</label>
+                                <input type="password" class="form-control mb-3" id="password" placeholder="請輸入密碼">
+                                
+                                <label for="confirm-password" class="fw-bolder">再次輸入密碼</label>
+                                <input type="password" class="form-control mb-3" id="confirm-password" placeholder="請再次輸入密碼">                                
+                            </div>
+                        </div>
+                        <div v-else>
+                            <div class="mt-3 text-start">
+                            <label for="email" class="fw-bolder">Email</label>
+                            <input type="email" class="form-control mb-3" id="email" placeholder="請輸入Email">
+                            </div>
+                            <div class="mt-3 text-start">
+                            <label for="password" class="fw-bolder">密碼</label>
+                            <input type="password" class="form-control mb-3" id="password" placeholder="請輸入密碼">
+                            </div>
+                        </div>
                         <div class="d-flex flex-column align-items-center">
                             <button v-if="isLogin" class="btn btn-primary btn-lg fw-bolder w-100 mb-3">註冊帳號</button>
                             <button v-else class="btn btn-primary btn-lg fw-bolder w-100 mb-3">登入</button>
