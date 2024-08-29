@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory,createWebHashHistory } from 'vue-router'
 import LoginView from '../views/LoginView.vue'
-import NotFound from '@/views/NotFound.vue'
+import NotFound from '../views/NotFound.vue'
+
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
@@ -9,6 +10,11 @@ const router = createRouter({
       path: '/',
       name: 'login',
       component: LoginView
+    },
+    {
+      path: '/todo',
+      name: 'Todo',
+      component: ()=> import('../views/TodosView.vue')
     },
     // {
     //   path: '/about',

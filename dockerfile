@@ -16,6 +16,8 @@ COPY package*.json ./
 RUN npm install
 RUN npm install typescript@latest --save-dev
 RUN npm install gh-pages
+# vue icon
+RUN npm install lucide-vue-next
 # 安裝 Bootstrap
 RUN npm i --save bootstrap
 RUN npm i --save-dev sass
