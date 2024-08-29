@@ -1,16 +1,38 @@
 <script setup lang="ts">
 import {ref,onMounted } from 'vue';
+import axios from 'axios';
 import { Plus } from 'lucide-vue-next';
 import { usersStore } from '@/stores/usersStore';
 import Header from '../components/layouts/HeaderLayout.vue'
 import {useRouter} from 'vue-router';
+import { res } from '@/types/users';
+import { TodosUrl } from '@/api/url/todosUrl';
 
 const store = usersStore();
-console.log(`store:${store.userData?.token}`);
+const token=store.userData?.token;
+const content=ref('');
+
 
 const router = useRouter();
 const isHasData=ref(true);
 
+const AddTodos=async():res=>{
+    try{
+        const response:AxiosResponse<todosResponse>=await axios.post(TodosUrl,{
+            content:content.value
+        },{
+            headers: {Authorization: token}
+        });
+        console.log(response.data);
+        //todos.value=response.data.data;
+    }catch(error:any){
+        // if(axios.isAxiosError(error)){
+        //     todomsg.value = `取得所有代辦事項失敗，${error.response?.data?.message || error.message}`;
+        // }else {
+        //     todomsg.value=`取得所有代辦事項失敗，發生未知錯誤:${error.message}`;
+        // }
+    }
+};
 
 onMounted(()=>{
     if(store.userData==undefined){
@@ -25,8 +47,8 @@ onMounted(()=>{
         <div>
             <div>
                 <div class="input-group">
-                    <input type="text" class="form-control" placeholder="請輸入待辦事項" >
-                    <a class="input-group-text rounded-md  right-0 ">
+                    <input type="text" class="form-control" v-model="content" placeholder="請輸入待辦事項" >
+                    <a class="input-group-text rounded-md  right-0 " @click="AddTodos">
                     <Plus class="bg-primary w-20 top-0 text-white absolute" />
                     </a>
                 </div>

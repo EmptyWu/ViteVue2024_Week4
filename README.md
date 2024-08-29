@@ -47,6 +47,6 @@ npm run dev
 ```sh
 npm run build
 ```
-立vue
-```立vue
+vue
+```js
 ```
