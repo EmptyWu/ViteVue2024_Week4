@@ -35,39 +35,38 @@ const signinFn =async():res=>{
             setToken(response.data);
             router.push('/todo');
         }
-        console.log(response.data);
     }
     catch(error:any){
         const e=error.response.data as MsgResponse;
-        console.log(e.status);
-        e.message.forEach((msg)=>{
-            console.log("Error",msg);
-        });
-        // if(axios.isAxiosError(error)){
-        //     msgsignin.value = `登入失敗，${error.response?.data?.message || error.message}`;
-        // }else {
-        //     msgsignin.value=`登入失敗，發生未知錯誤:${error.message}`;
-        // }
+        if(!e.status){
+            alert(e.message);
+        }
     }
 
 };
 const signupFn= async ():res =>{
     try{
+        isemail.value=false;
+        if(SignPram.value.cofpwd==='' || SignPram.value.password !== SignPram.value.cofpwd){
+            throw new Error('密碼輸入有誤');
+        }
+        
         const response:SingupRes= await axios.post(SignupUrl
             ,{
             email: SignPram.value.email,
             password: SignPram.value.password,
             nickname: SignPram.value.nickname
             });
-            console.log(response.uid);
     }
     catch(error:any){
-        const e=error.response.data as MsgResponse;
-        console.log(e.status);
-       
-        e.message.forEach((msg)=>{
-            console.log("Error",msg);
-        });
+        if (error.response) {
+            const e=error.response.data as MsgResponse;
+            if(!e.status){
+                alert(e.message);
+            }       
+        }else {
+            alert(error.message);
+        }
     }
 };
 
@@ -106,7 +105,6 @@ const reg=(status)=>{
                                 <label for="confirm-password" class="fw-bolder">再次輸入密碼</label>
                                 <input type="password" class="form-control mb-3" v-model="SignPram.cofpwd" id="confirm-password" placeholder="請再次輸入密碼">                                
                             </div>
-                            {{ SignPram.email }}
                         </div>
                        
                         <div v-else>

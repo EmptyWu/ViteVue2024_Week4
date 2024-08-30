@@ -1,3 +1,6 @@
 import { apiUrl } from "./baseUrl";
 export const TodosUrl=`${apiUrl}todos/`;
-export const TodosToggleUrl=`${apiUrl}todos/{id}/toggle`;
+const getTodoUrl = (id, action = '') => `${apiUrl}todos/${id}${action ? `/${action}` : ''}`;
+
+export const TodosToggleUrl=(id)=>getTodoUrl(id,'toggle');
+export const TodosPutDelUrl=(id)=>getTodoUrl(id);

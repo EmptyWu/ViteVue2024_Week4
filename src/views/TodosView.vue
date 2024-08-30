@@ -1,43 +1,117 @@
 <script setup lang="ts">
 import {ref,onMounted } from 'vue';
 import axios from 'axios';
-import { Plus } from 'lucide-vue-next';
+import { Plus,XIcon } from 'lucide-vue-next';
 import { usersStore } from '@/stores/usersStore';
 import Header from '../components/layouts/HeaderLayout.vue'
-import {useRouter} from 'vue-router';
-import { res } from '@/types/users';
-import { TodosUrl } from '@/api/url/todosUrl';
+import { useRouter } from 'vue-router';
+import { res,MsgResponse,SigninResponseData } from '@/types/users';
+import { GetTodoResponseData,Todo} from '@/types/todo';
+import { TodosUrl,TodosToggleUrl,TodosPutDelUrl } from '@/api/url/todosUrl';
+import {CheckoutUrl} from '@/api/url/usersurl';
 
-const store = usersStore();
-const token=store.userData?.token;
+const {setToken}=usersStore();
+const token=document.cookie.match(/(?:^|;\s*)emptyTodo=([^;]*)/)?.[1]
 const content=ref('');
-
-
 const router = useRouter();
 const isHasData=ref(true);
 
+const todoList=ref<Todo[]>([])
+
 const AddTodos=async():res=>{
     try{
-        const response:AxiosResponse<todosResponse>=await axios.post(TodosUrl,{
+        await axios.post(TodosUrl,{
             content:content.value
         },{
             headers: {Authorization: token}
         });
-        console.log(response.data);
-        //todos.value=response.data.data;
+        getTodos();
     }catch(error:any){
-        // if(axios.isAxiosError(error)){
-        //     todomsg.value = `取得所有代辦事項失敗，${error.response?.data?.message || error.message}`;
-        // }else {
-        //     todomsg.value=`取得所有代辦事項失敗，發生未知錯誤:${error.message}`;
-        // }
+        if (error.response) {
+            const e=error.response.data as MsgResponse;
+            if(!e.status){
+                router.push('/');
+            }       
+        }else {
+            alert(error.message);
+        }
+    }
+};
+
+const getTodos=async():res=>{
+    try{
+        const response:GetTodoResponseData=await axios.get(TodosUrl,{
+            headers: {Authorization: token}
+        });
+        if(response.data.data.length >0){
+            todoList.value=response.data.data;
+            isHasData.value=true;
+        }else {
+            isHasData.value=false;
+        }
+    }catch(error:any){
+        const e=error.response.data as MsgResponse;
+            if(!e.status){
+                alert(e.message);
+            }     
+    }
+};
+
+const checkOut =async():res=>{
+    try{
+        const { data: responseData }: { data: SigninResponseData } = await axios.get(CheckoutUrl, {
+            headers: { Authorization: token },
+        });
+ 
+        setToken({
+            status :responseData.status,
+            token :token,
+            nickname: responseData.nickname,
+        });
+    }catch(error:any){
+        if (error.response) {
+            const e=error.response.data as MsgResponse;
+            if(!e.status){
+                router.push('/');
+            }       
+        }else {
+            alert(error.message);
+        }
+    }
+};
+
+const toggle=async(id:string):res=>{
+    try{
+        await axios.patch(TodosToggleUrl(id),{},{
+            headers: {Authorization: token}
+        });
+        getTodos();
+       
+    }catch(error:any){
+        const e=error.response.data as MsgResponse;
+            if(!e.status){
+                alert(e.message);
+            }       
+    }
+};
+
+const delTodo=async(id:string):res=>{
+    try{
+        await axios.delete(TodosPutDelUrl(id),{
+            headers: {Authorization: token}
+        });
+        getTodos();
+    }catch(error:any){
+        const e=error.response.data as MsgResponse;
+        if(!e.status){
+            alert(e.message);
+        }     
     }
 };
 
 onMounted(()=>{
-    if(store.userData==undefined){
-        router.push('/');
-    }
+    checkOut();
+    getTodos();
 });
 
 </script>
@@ -66,11 +140,16 @@ onMounted(()=>{
                     </ul>
                     <div class="card-body">
                         <ul class="list-unstyled">
-                            <li>
-                                <span class="ms-3">1</span>
+                            <li v-for="(item,index) in todoList" :key="item.id" class="d-flex align-items-center">
+                                <input type="checkbox" @change="toggle(item.id)" :checked="item.status" :id="item.id">
+                                <span class="ms-3">{{item.content}}</span>
+                                <div @click="delTodo(item.id)">
+                                    <XIcon />
+                                </div>
                             </li>
                         </ul>
                     </div>
+                    <div>{{ todoList.length }}待完成項目</div>
                 </div>
                 <div v-else>
                     <h5>目前尚無待辦事項</h5>

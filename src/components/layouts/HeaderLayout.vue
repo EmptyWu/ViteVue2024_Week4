@@ -7,6 +7,7 @@ import { res,MsgResponse,SinguoutResponseData } from '@/types/users';
 
 
 const store =usersStore();
+const {clearToken}=usersStore();
 const router = useRouter();
 
 const signoutFn =async():res=>{
@@ -14,6 +15,7 @@ const signoutFn =async():res=>{
         const response:SinguoutResponseData=await axios.post(SignoutUrl,{},{
             headers: {Authorization: store.userData?.token}
         });
+        clearToken();
         //console.log(response.data);
         //router.push('/');
     }catch(error:any){
@@ -34,11 +36,9 @@ const signoutFn =async():res=>{
             </div>
         </RouterLink>
         <div class="d-lg-flex gap-3">
-            <RouterLink to="/todo">
                 <div class="text-primary no-underline">
                     {{store.userData?.nickname  }} 的代辦
                 </div>
-            </RouterLink>
             <RouterLink to="/">
                 <button type="button" @click="signoutFn">登出</button>
             </RouterLink>

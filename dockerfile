@@ -2,7 +2,8 @@ FROM node:20
 
 RUN apt-get update && \
     apt-get install -y git && \
-    apt-get clean
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 RUN git config --global user.email "chunhsing0921@gmail.com" && \
     git config --global user.name "Emptywu"
@@ -13,14 +14,12 @@ RUN npm config set cache /app/.npm-cache --global
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm install
-RUN npm install typescript@latest --save-dev
-RUN npm install gh-pages
-# vue icon
-RUN npm install lucide-vue-next
-# 安裝 Bootstrap
-RUN npm i --save bootstrap
-RUN npm i --save-dev sass
+
+RUN npm i && \
+    npm i typescript@latest --save-dev && \
+    npm i gh-pages lucide-vue-next && \
+    npm i --save bootstrap axios && \
+    npm i --save-dev sass
 
 COPY . .
 
